@@ -1,0 +1,15 @@
+apply plugin: 'java'
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+}
+
+
+buildscript {  
+    repositories {  
+        mavenCentral()  
+    }  
+    dependencies {  
+        classpath 'com.android.tools.build:gradle:0.12.+'  
+    }  
+}

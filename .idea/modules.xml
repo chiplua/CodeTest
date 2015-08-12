@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/DesignMode.iml" filepath="$PROJECT_DIR$/DesignMode.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/beverage/beverage.iml" filepath="$PROJECT_DIR$/beverage/beverage.iml" />
+      <module fileurl="file://$PROJECT_DIR$/chocolate/chocolate.iml" filepath="$PROJECT_DIR$/chocolate/chocolate.iml" />
+      <module fileurl="file://$PROJECT_DIR$/coffee/coffee.iml" filepath="$PROJECT_DIR$/coffee/coffee.iml" />
+      <module fileurl="file://$PROJECT_DIR$/compound/compound.iml" filepath="$PROJECT_DIR$/compound/compound.iml" />
+      <module fileurl="file://$PROJECT_DIR$/djview/djview.iml" filepath="$PROJECT_DIR$/djview/djview.iml" />
+      <module fileurl="file://$PROJECT_DIR$/duck/duck.iml" filepath="$PROJECT_DIR$/duck/duck.iml" />
+      <module fileurl="file://$PROJECT_DIR$/gumballmachine/gumballmachine.iml" filepath="$PROJECT_DIR$/gumballmachine/gumballmachine.iml" />
+      <module fileurl="file://$PROJECT_DIR$/home/home.iml" filepath="$PROJECT_DIR$/home/home.iml" />
+      <module fileurl="file://$PROJECT_DIR$/inputstream/inputstream.iml" filepath="$PROJECT_DIR$/inputstream/inputstream.iml" />
+      <module fileurl="file://$PROJECT_DIR$/iterator/iterator.iml" filepath="$PROJECT_DIR$/iterator/iterator.iml" />
+      <module fileurl="file://$PROJECT_DIR$/light/light.iml" filepath="$PROJECT_DIR$/light/light.iml" />
+      <module fileurl="file://$PROJECT_DIR$/operationjar/operationjar.iml" filepath="$PROJECT_DIR$/operationjar/operationjar.iml" />
+      <module fileurl="file://$PROJECT_DIR$/pizza/pizza.iml" filepath="$PROJECT_DIR$/pizza/pizza.iml" />
+      <module fileurl="file://$PROJECT_DIR$/proxy/proxy.iml" filepath="$PROJECT_DIR$/proxy/proxy.iml" />
+      <module fileurl="file://$PROJECT_DIR$/singleton/singleton.iml" filepath="$PROJECT_DIR$/singleton/singleton.iml" />
+      <module fileurl="file://$PROJECT_DIR$/transition/transition.iml" filepath="$PROJECT_DIR$/transition/transition.iml" />
+      <module fileurl="file://$PROJECT_DIR$/turkey/turkey.iml" filepath="$PROJECT_DIR$/turkey/turkey.iml" />
+      <module fileurl="file://$PROJECT_DIR$/weather/weather.iml" filepath="$PROJECT_DIR$/weather/weather.iml" />
+      <module fileurl="file://$PROJECT_DIR$/weatherapi/weatherapi.iml" filepath="$PROJECT_DIR$/weatherapi/weatherapi.iml" />
+    </modules>
+  </component>
+</project>

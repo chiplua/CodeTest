@@ -1,0 +1,22 @@
+1.在其中的终端中输入
+$ rmiregistry  &           
+
+chiplua_client at chiplua-client in ~/work/diy/DesignMode/proxy/build/classes/main (master●) 
+$ java com.chiplua.gumball.GumballMachineTestDrive 127.0.0.1  101
+Gumball Machine: 127.0.0.1
+Current inventory: 101 gumballs
+Current state: waiting for quarter
+
+2.开启另外一个终端， 输入
+chiplua_client at chiplua-client in ~/work/diy/DesignMode/proxy/build/classes/main (master●)
+$ java com.chiplua.gumball.GumballMonitorTestDrive              
+rmi://127.0.0.1/gumballmachine
+com.chiplua.gumballmonitor.GumballMonitor@3fc7380b
+rmi://192.168.3.122/gumballmachine
+com.chiplua.gumballmonitor.GumballMonitor@4993d44d
+Gumball Machine: 127.0.0.1
+Current inventory: 101 gumballs
+Current state: waiting for quarter
+Gumball Machine: 127.0.0.1
+Current inventory: 101 gumballs
+Current state: waiting for quarter

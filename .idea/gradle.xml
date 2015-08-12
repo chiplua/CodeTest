@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="GradleSettings">
+    <option name="linkedExternalProjectsSettings">
+      <GradleProjectSettings>
+        <option name="distributionType" value="DEFAULT_WRAPPED" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="gradleJvm" value="1.6" />
+        <option name="modules">
+          <set>
+            <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/app" />
+            <option value="$PROJECT_DIR$/beverage" />
+            <option value="$PROJECT_DIR$/chocolate" />
+            <option value="$PROJECT_DIR$/coffee" />
+            <option value="$PROJECT_DIR$/compound" />
+            <option value="$PROJECT_DIR$/djview" />
+            <option value="$PROJECT_DIR$/duck" />
+            <option value="$PROJECT_DIR$/gumballmachine" />
+            <option value="$PROJECT_DIR$/home" />
+            <option value="$PROJECT_DIR$/inputstream" />
+            <option value="$PROJECT_DIR$/iterator" />
+            <option value="$PROJECT_DIR$/light" />
+            <option value="$PROJECT_DIR$/operationjar" />
+            <option value="$PROJECT_DIR$/pizza" />
+            <option value="$PROJECT_DIR$/proxy" />
+            <option value="$PROJECT_DIR$/singleton" />
+            <option value="$PROJECT_DIR$/transition" />
+            <option value="$PROJECT_DIR$/turkey" />
+            <option value="$PROJECT_DIR$/weather" />
+            <option value="$PROJECT_DIR$/weatherapi" />
+          </set>
+        </option>
+      </GradleProjectSettings>
+    </option>
+  </component>
+</project>
