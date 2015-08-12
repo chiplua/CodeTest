@@ -1,1 +1,1 @@
-include ':app', ':duck', ':weather', ':weatherapi', ':beverage', ':inputstream', ':pizza', ':chocolate', ':singleton', ':light', ':turkey', ':home', ':coffee', ':transition', ':iterator', ':gumballmachine', ':proxy', ':compound', ':djview', ':operationjar'
+include ':app', ':duck', ':weather', ':weatherapi', ':beverage', ':inputstream', ':pizza', ':chocolate', ':singleton', ':light', ':turkey', ':home', ':coffee', ':transition', ':iterator', ':gumballmachine', ':proxy', ':compound', ':djview', ':operationjar', ':flashlight'

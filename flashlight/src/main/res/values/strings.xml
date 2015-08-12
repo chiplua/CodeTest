@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">FlashLight</string>
+    <string name="bfre">Blinking frequency</string>
+    <string name="openclew">Please open the flashlight!</string>
+    <string name="clickclose">Click Close a flashlight!</string>
+    <string name="openfail">The flashlights Open failed! May have other applications open.</string>
+
+    <string-array name="fre_array">
+        <item>Always</item>
+        <item>High</item>
+        <item>Medium</item>
+        <item>Low</item>
+    </string-array>
+</resources>
