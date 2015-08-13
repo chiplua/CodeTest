@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.hardware.Camera;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -93,5 +94,19 @@ public class FlashLightActivity extends Activity {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    //back键退出程序
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == event.KEYCODE_BACK && event.getRepeatCount() == 0) {
+            if (isOpen) {
+                isOpen = !isOpen;
+                setLedOff();
+            }
+            finish();
+        }
+        return super.onKeyDown(keyCode, event);
     }
 }
