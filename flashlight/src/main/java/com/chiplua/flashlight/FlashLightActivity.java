@@ -5,17 +5,21 @@ import android.hardware.Camera;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.view.View;
-import android.os.IHardwareService;
+import android.widget.ImageView;
+
+import java.lang.reflect.Method;
 
 public class FlashLightActivity extends Activity {
     private static Boolean isOpen = false;
     private Camera mCamera = null;
     private Camera.Parameters mCameraParameters = null;
+    private ImageView mBgView = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_flash_light);
+        mBgView = (ImageView)findViewById(R.id.bg);
 
         findViewById(R.id.button_switch).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -23,7 +27,9 @@ public class FlashLightActivity extends Activity {
                 isOpen = !isOpen;
 
                 if (isOpen) {
-                    openCamera();
+                    setLedOn();
+                } else {
+                    setLedOff();
                 }
             }
         });
@@ -33,9 +39,34 @@ public class FlashLightActivity extends Activity {
         mCamera = Camera.open();
         mCameraParameters = mCamera.getParameters();
         mCameraParameters.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
+        mCamera.startPreview();
         return true;
     }
-/*
+
+    private void closeCamera(){
+        if(mCamera != null){
+            mCamera.stopPreview();
+            mCamera.release();
+            mCamera = null;
+        }
+    }
+
+    private void setLedOn() {
+        setFlashlightEnabled(true);
+        openCamera();
+        mBgView.setImageResource(R.drawable.on);
+        mCameraParameters.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
+        mCamera.setParameters(mCameraParameters);
+    }
+
+    private void setLedOff() {
+        setFlashlightEnabled(false);
+        mBgView.setImageResource(R.drawable.close);
+        mCameraParameters.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
+        mCamera.setParameters(mCameraParameters);
+        closeCamera();
+    }
+
     private boolean getFlashlightEnabled() {
         try {
             return IHardwareService.Stub.asInterface(
@@ -49,5 +80,18 @@ public class FlashLightActivity extends Activity {
             return false;
         }
     }
-*/
+
+    private void setFlashlightEnabled(boolean isEnable) {
+        try {
+            Method method = Class.forName("android.os.ServiceManager").getMethod("getService",
+                    String.class);
+            IBinder binder = (IBinder) method.invoke(null, new Object[] {
+                    "hardware"
+            });
+            IHardwareService localhardwareservice = IHardwareService.Stub.asInterface(binder);
+            localhardwareservice.setFlashlightEnabled(isEnable);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

@@ -1,0 +1,293 @@
+package com.chiplua.flashlight;
+
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.hardware.Camera;
+import android.hardware.Camera.Parameters;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.IBinder;
+import android.os.Message;
+import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.ImageView;
+import android.widget.Toast;
+
+import java.lang.reflect.Method;
+
+public class FlashLightActivity extends Activity implements View.OnClickListener{
+
+    private final static int MSG_SETLED = 0;
+    private final static int MSG_FINISH = 1;
+
+    private final static int FRE_HIGH = 100;
+    private final static int FRE_MIDDLE = 400;
+    private final static int FRE_LOW = 700;
+
+    private static final String ACTION = "com.hll.flashlight.close";
+    private static int NOTIFICATION_ID = 100053;
+
+    private boolean isOpen = false;
+    private Camera mCamera;
+    private Parameters mCameraParameters = null;
+    private boolean isLedOn = false;
+    private int mCurTime = 0;
+    private ImageView mBgView = null;
+    private int mCurSelectIndex = 0;
+    private NotificationManager mNotificationManager = null;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, 
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        setContentView(R.layout.activity_flash_light);
+
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
+        mNotificationManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);  
+
+        mBgView = (ImageView)findViewById(R.id.bg);
+        findViewById(R.id.button_switch).setOnClickListener(this);
+
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(ACTION);
+        registerReceiver(mMyBroadcastReceiver, filter);
+    }
+
+    private boolean openCamera(){
+        try{
+            mCamera = Camera.open();
+            mCameraParameters = mCamera.getParameters();
+            mCameraParameters.setFlashMode(Parameters.FLASH_MODE_TORCH);
+            mCamera.startPreview();
+            setLedOn(true);
+            return true;
+        }catch(Exception e){
+            Toast.makeText(this, R.string.openfail, Toast.LENGTH_LONG).show();
+            return false;
+        }
+    }
+
+    private void closeCamera(){
+        if(mCamera != null){
+            mHandler.removeMessages(MSG_SETLED);
+            mCamera.stopPreview();
+            mCamera.release();
+            mCamera = null;
+            mCurSelectIndex = 0;
+        }
+    }
+
+    private void setLedOn(boolean isOn){
+        if(mCamera == null || mCameraParameters == null){
+            return;
+        }
+        isLedOn = isOn;
+        if(isOn){
+            mCameraParameters.setFlashMode(Parameters.FLASH_MODE_TORCH);
+        }else{
+            mCameraParameters.setFlashMode(Parameters.FLASH_MODE_OFF);
+        }
+        mCamera.setParameters(mCameraParameters);
+    }
+
+    public void onDestroy(){
+        closeCamera();
+        mNotificationManager.cancel(NOTIFICATION_ID);
+        this.unregisterReceiver(mMyBroadcastReceiver);
+        super.onDestroy();
+    }
+
+    private void setFlashlightEnabled(boolean isEnable) {
+        try {
+            Method method = Class.forName("android.os.ServiceManager").getMethod("getService",
+                    String.class);
+            IBinder binder = (IBinder) method.invoke(null, new Object[] {
+                "hardware"
+            });
+            IHardwareService localhardwareservice = IHardwareService.Stub.asInterface(binder);
+            localhardwareservice.setFlashlightEnabled(isEnable);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private boolean getFlashlightEnabled() {
+        try {
+            return IHardwareService.Stub.asInterface(
+                    (IBinder) Class.forName("android.os.ServiceManager")
+                            .getMethod("getService", new Class[] {
+                                String.class
+                            }).invoke(null, new Object[] {
+                                "hardware"
+                            })).getFlashlightEnabled();
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+/*
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.settings_menu, menu);
+        return true;
+    }
+
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()){
+            case R.id.menu_bfre:
+                popSelectDialog();
+                break;
+        }
+        return true;
+    }
+*/
+
+    @Override
+    public void onClick(View v) {
+        // TODO Auto-generated method stub
+        switch (v.getId()){
+            case R.id.button_switch:
+                if (!isOpen) {
+                    setFlashlightEnabled(true);
+                    if(!getFlashlightEnabled()){
+                        if(openCamera()){
+                            mBgView.setImageResource(R.drawable.on);
+                            isOpen = true;
+                        }
+                    }else{
+                        mBgView.setImageResource(R.drawable.on);
+                        isOpen = true;
+                    }
+                } else {
+                    setFlashlightEnabled(false);
+                    closeCamera();
+                    mBgView.setImageResource(R.drawable.close);
+                    isOpen = false;
+                }
+                break;
+//            case R.id.button_high:
+//                resetMessage(FRE_HIGH);
+//                break;
+//            case R.id.button_low:
+//                resetMessage(FRE_LOW);
+//                break;
+//            case R.id.button_middle:
+//                resetMessage(FRE_MIDDLE);
+//                break;
+//            case R.id.button_always:
+//                resetMessage(0);
+//                break;
+        }
+    }
+
+    private Handler mHandler =  new Handler(){
+        public void handleMessage(Message msg) {
+            switch(msg.what){
+                case MSG_FINISH:
+                    FlashLightActivity.this.finish();
+                    break;
+                case MSG_SETLED:
+                    setLedOn(!isLedOn);
+                    if(mCurTime != 0){
+                        mHandler.sendEmptyMessageDelayed(MSG_SETLED, mCurTime);
+                    }
+                    break;
+            }
+        }
+    };
+
+    private void resetMessage(int time){
+        if(mCamera == null || mCameraParameters == null){
+            return;
+        }
+        mCurTime = time;
+        mHandler.removeMessages(MSG_SETLED);
+        if(time == 0){
+            setLedOn(true);
+        }else{
+            mHandler.sendEmptyMessageDelayed(MSG_SETLED, time);
+        }
+    }
+
+    private void popSelectDialog(){
+        if(!isOpen){
+            Toast.makeText(getApplicationContext(), R.string.openclew, Toast.LENGTH_SHORT).show();
+            return;
+        }
+        new AlertDialog.Builder(this)
+        .setTitle(R.string.bfre)
+        .setSingleChoiceItems(R.array.fre_array, mCurSelectIndex,
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog,
+                            int which) {
+                        doSelect(which);
+                        dialog.dismiss();
+                    }
+                }).show();
+    }
+
+    private void doSelect(int which){
+        mCurSelectIndex = which;
+        if(which == 0){
+            resetMessage(0);
+        }else if(which == 1){
+            resetMessage(FRE_HIGH);
+        }else if(which == 2){
+            resetMessage(FRE_MIDDLE);
+        }else if(which == 3){
+            resetMessage(FRE_LOW);
+        }
+    }
+
+    public void onStop(){
+        if(isOpen){
+            //sendNotification();
+            closeCamera();
+            mBgView.setImageResource(R.drawable.close);
+            isOpen = false;
+        }
+        super.onStop();
+    }
+
+    private void sendNotification(){
+        Notification notification = new Notification();
+        notification.icon = R.drawable.ic_launcher;
+        notification.tickerText = this.getText(R.string.clickclose);
+        notification.flags = Notification.FLAG_ONGOING_EVENT;
+        Intent intent = new Intent(ACTION);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        notification.setLatestEventInfo(this, getText(R.string.app_name), this.getText(R.string.clickclose), pendingIntent);
+        mNotificationManager.notify(NOTIFICATION_ID, notification);
+    }
+
+    private BroadcastReceiver  mMyBroadcastReceiver = new BroadcastReceiver(){
+        public void onReceive(Context context, Intent intent) {
+            FlashLightActivity.this.finish();
+        }
+    };
+
+    public void onBackPressed(){
+        if(isOpen){
+            //sendNotification();
+            closeCamera();
+            mBgView.setImageResource(R.drawable.close);
+            isOpen = false;
+            mHandler.sendEmptyMessageDelayed(MSG_FINISH, 150);
+        }else{
+            super.onBackPressed();
+        }
+    }
+}
