@@ -37,4 +37,11 @@ proxy:代理模式：为另一个对象提供一个替身或占位符以控制�
 Main-Class: com.chiplua.operationjar.OperationJar
 2.javac -d test src/main/java/com/chiplua/operationjar/*.java
 3.jar cvfm  operation.jar  META-INF/MANIFEST.MF   -C test/  .
+(把tools这个文件夹打包进jar包 jar cvfm  operation.jar  META-INF/MANIFEST.MF ./tools/aapt  -C test/  .)
 4.java -jar operation.jar
+
+
+在android studio中手动添加jar文件的编译和调试
+1.Run->Edit Confiturations
+2.最左上方点击"+", 输入name:xxxx, 指定Main Class, 指定Working directory, 指定"Use classpath of module"
+3.OK

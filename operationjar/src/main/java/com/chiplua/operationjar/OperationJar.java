@@ -30,6 +30,7 @@ public class OperationJar extends JFrame {
     private String selectFileName = null;
     private String selectFileDir = null;
     private String selectFileUnjarDir = null;
+    private String currentBinDir = null;
     JButton open = new JButton("Open");
     JPanel fileOpenFieldPanel  = new JPanel();
     JLabel selectFile = new JLabel("Please select a Jar file:");
@@ -74,6 +75,11 @@ public class OperationJar extends JFrame {
     JLabel slotIdYeamobLabel = new JLabel("slotid:");
     JTextField slotIdYeamobText = new JTextField();
 
+    JLabel versionCodeLabel = new JLabel("versionCode:");
+    JTextField versionCodeText = new JTextField();
+    JLabel versionNameLabel = new JLabel("versionName:");
+    JTextField versionNameText = new JTextField();
+
     JButton readAllButton = new JButton("Read ALL");
     JButton writeAllButton = new JButton("Write ALL");
     JButton saveButton = new JButton("Save");
@@ -94,6 +100,8 @@ public class OperationJar extends JFrame {
     }
 
     public void initMenu() {
+        deCompressOperationJar();
+        //System.exit(1);
         System.out.println("initMenu");
         setLayout(new FlowLayout());
         menuBar = new JMenuBar();
@@ -114,9 +122,17 @@ public class OperationJar extends JFrame {
     }
 
     private void hllsetBackground() {
+        ImageIcon imageIcon = null;
         pp.setOpaque(false);
         container.add(pp);
-        ImageIcon imageIcon = new ImageIcon("./background.jpg");
+
+        String os_name = System.getProperties().get("os.name").toString().toLowerCase();
+        if(os_name.indexOf("windows") != -1) {
+            imageIcon = new ImageIcon(System.getProperty("user.dir") + "\\operation\\background.jpg");
+        } else if(os_name.indexOf("linux") != -1) {
+            imageIcon = new ImageIcon("./background.jpg");
+        }
+
         JLabel background = new JLabel(imageIcon);
         this.getLayeredPane().add(background, new Integer(Integer.MIN_VALUE));
         ((JPanel)this.getContentPane()).setOpaque(false);
@@ -154,7 +170,7 @@ public class OperationJar extends JFrame {
     }
 
     private void initApkFrame() {
-        frame.setSize(730, 750);
+        frame.setSize(730, 850);
         container.setLayout(new BorderLayout());
         frame.setVisible(true);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -183,6 +199,10 @@ public class OperationJar extends JFrame {
         switchIdFromYeamob();
         appIdFromYeamob();
         slotIdFromYeamob();
+
+        /*read VersionCode, VersionName from AndroidManifest.xml with aapt*/
+        versionCodeFromAndroidManifest();
+        versionNameFromAndroidManifest();
 
         readExitButtons();
         setButtonEvent();
@@ -245,7 +265,7 @@ public class OperationJar extends JFrame {
     }
 
     private void lcStringFromSysconfButton() {
-                /*button: lc from lc.txt*/
+        /*button: lc from lc.txt*/
         lcStringButton2.setBounds(550, 160, 150, 20);
         fileOpenFieldPanel.add(lcStringButton2);
     }
@@ -412,9 +432,31 @@ public class OperationJar extends JFrame {
         slotIdYeamobLabel.setBounds(10, 680, 300, 20);
         fileOpenFieldPanel.add(slotIdYeamobLabel);
 
-        /*text: appid from yeamob*/
+        /*text: appid from yeamob.txt*/
         slotIdYeamobText.setBounds(200, 680, 300, 20);
         fileOpenFieldPanel.add(slotIdYeamobText);
+    }
+
+    private void versionCodeFromAndroidManifest() {
+        /*label: versionCode from AndroidManifest*/
+        versionCodeLabel.setFont(new Font("宋体", Font.ITALIC, 22));
+        versionCodeLabel.setBounds(10, 720, 300, 20);
+        fileOpenFieldPanel.add(versionCodeLabel);
+
+        /*text: versionCode from AndroidManifest*/
+        versionCodeText.setBounds(200, 720, 300, 20);
+        fileOpenFieldPanel.add(versionCodeText);
+    }
+
+    private void versionNameFromAndroidManifest() {
+        /*label: versionName form AndroidManifest*/
+        versionNameLabel.setFont(new Font("宋体", Font.ITALIC, 22));
+        versionNameLabel.setBounds(10, 760, 300, 20);
+        fileOpenFieldPanel.add(versionNameLabel);
+
+        /*text: versionName from AndroidManifest*/
+        versionNameText.setBounds(200, 760, 300, 20);
+        fileOpenFieldPanel.add(versionNameText);
     }
 
     private void readWriteSaveExitButtons() {
@@ -437,11 +479,11 @@ public class OperationJar extends JFrame {
 
     private void readExitButtons() {
         /*button: Button for read all*/
-        readAllButton.setBounds(570, 640, 150, 20);
+        readAllButton.setBounds(570, 720, 150, 20);
         fileOpenFieldPanel.add(readAllButton);
 
         /*button: Button for exit*/
-        exitButton.setBounds(570, 680, 150, 20);
+        exitButton.setBounds(570, 760, 150, 20);
         fileOpenFieldPanel.add(exitButton);
     }
 
@@ -481,6 +523,10 @@ public class OperationJar extends JFrame {
                 if (selectFileName != null) {
                     GetFileStrings.deleteFile(selectFileUnjarDir);
                 }
+
+                if (currentBinDir != null) {
+                    GetFileStrings.deleteFile(currentBinDir);
+                }
                 System.exit(1);
             }
         });
@@ -511,6 +557,8 @@ public class OperationJar extends JFrame {
                 switchIdYeamobText.setText(GetFileStrings.yeamobSwitchIdTextGetString(selectFileUnjarDir));
                 appIdYeamobText.setText(GetFileStrings.yeamobAppIdTextGetString(selectFileUnjarDir));
                 slotIdYeamobText.setText(GetFileStrings.yeamobSlotIdTextGetString(selectFileUnjarDir));
+                versionCodeText.setText(GetFileStrings.androidManifestVersionCodeGetString(selectFileName));
+                versionNameText.setText(GetFileStrings.androidManifestVersionNameGetString(selectFileName));
             }
         });
 
@@ -625,5 +673,24 @@ public class OperationJar extends JFrame {
                 initApkFrame();
             }
         });
+    }
+
+    private void deCompressOperationJar() {
+        String currentPath = System.getProperty("user.dir");
+        String currentUnDir = currentPath + "\\operation";
+        String currentFile = currentPath + "\\operation.jar";
+
+        String os_name = System.getProperties().get("os.name").toString().toLowerCase();
+        System.out.println("os_name is: " + os_name);
+        currentBinDir = currentUnDir;
+        if(os_name.indexOf("windows") != -1) {
+            try {
+                DecompressJar.doIt(currentFile, currentUnDir);
+                GetFileStrings.deleteFile(currentUnDir + "\\com");
+                GetFileStrings.deleteFile(currentUnDir + "\\META-INF");
+            } catch (Exception xe) {
+                xe.printStackTrace();
+            }
+        }
     }
 }

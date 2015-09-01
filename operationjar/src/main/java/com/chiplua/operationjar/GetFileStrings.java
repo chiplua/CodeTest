@@ -1,9 +1,11 @@
 package com.chiplua.operationjar;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 
 /**
  * Created by chiplua on 15-7-24.
@@ -399,6 +401,89 @@ public class GetFileStrings {
         return "";
     }
 
+    public static String androidManifestVersionCodeGetString(String fileName) {
+        String versionCode = "";
+        Process pr = null;
+        try {
+            Runtime rt = Runtime.getRuntime();
+            String os_name = System.getProperties().get("os.name").toString().toLowerCase();
+            if(os_name.indexOf("windows") != -1) {
+                pr = rt.exec(System.getProperty("user.dir") + "\\operation\\tools\\aapt.exe dump badging " + fileName);
+                System.out.println("tools/aapt.exe");
+            } else if(os_name.indexOf("linux") != -1) {
+                pr = rt.exec("./tools/aapt dump badging " + fileName);
+            }
 
+            BufferedInputStream in = new BufferedInputStream(pr.getInputStream());
+            BufferedReader inBr = new BufferedReader(new InputStreamReader(in));
+            String lineStr;
+            while ((lineStr = inBr.readLine()) != null) {
+                //获得命令执行后在控制台的输出信息
+                System.out.println(lineStr);// 打印输出信息
+                if (lineStr.contains("versionCode")) {
+                    System.out.println("indexof is: " + lineStr.indexOf("versionCode"));
+                    System.out.println("versionCode.lenth() is： " + "versionCode".length());
+                    versionCode = lineStr.substring(lineStr.indexOf("versionCode") + "versionCode".length() + 2, lineStr.indexOf("versionCode") + "versionCode".length() + 4);
+                    System.out.println("versionCode is: " + versionCode);
+                    break;
+                }
+            }
 
+            System.out.println("jump out while");
+/*            //检查命令是否执行失败。
+            if (pr.waitFor() != 0) {
+                if (pr.exitValue() == 1)//p.exitValue()==0表示正常结束，1：非正常结束
+                    System.err.println("命令执行失败!");
+            }*/
+
+            System.out.println("close inBr");
+            inBr.close();
+            in.close();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return versionCode;
+    }
+
+    public static String androidManifestVersionNameGetString(String fileName) {
+        String versionCode = "";
+        Process pr = null;
+        try {
+            Runtime rt = Runtime.getRuntime();
+            String os_name = System.getProperties().get("os.name").toString().toLowerCase();
+            if(os_name.indexOf("windows") != -1) {
+                pr = rt.exec(System.getProperty("user.dir") + "\\operation\\tools\\aapt.exe dump badging " + fileName);
+            } else if(os_name.indexOf("linux") != -1) {
+                pr = rt.exec("./tools/aapt dump badging " + fileName);
+            }
+            BufferedInputStream in = new BufferedInputStream(pr.getInputStream());
+            BufferedReader inBr = new BufferedReader(new InputStreamReader(in));
+            String lineStr;
+            while ((lineStr = inBr.readLine()) != null) {
+                //获得命令执行后在控制台的输出信息
+                System.out.println(lineStr);// 打印输出信息
+                if (lineStr.contains("versionName")) {
+                    System.out.println("indexof is: " + lineStr.indexOf("versionName"));
+                    System.out.println("versionName.lenth() is： " + "versionName".length());
+                    versionCode = lineStr.substring(lineStr.indexOf("versionName") + "versionName".length() + 2, lineStr.indexOf("versionName") + "versionName".length() + 11);
+                    System.out.println("versionName is: " + versionCode);
+                    break;
+                }
+            }
+
+/*
+            //检查命令是否执行失败。
+            if (pr.waitFor() != 0) {
+                if (pr.exitValue() == 1)//p.exitValue()==0表示正常结束，1：非正常结束
+                    System.err.println("命令执行失败!");
+            }
+*/
+
+            inBr.close();
+            in.close();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return versionCode;
+    }
 }
