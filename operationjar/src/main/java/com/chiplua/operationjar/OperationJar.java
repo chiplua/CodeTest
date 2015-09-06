@@ -80,6 +80,11 @@ public class OperationJar extends JFrame {
     JLabel versionNameLabel = new JLabel("versionName:");
     JTextField versionNameText = new JTextField();
 
+    JLabel umengChannelLabel = new JLabel("UMENG_CHANEL");
+    JTextField umengChannelText = new JTextField();
+    JLabel umengAppKeyLabel = new JLabel("UMENG_APPKEY");
+    JTextField umengAppKeyText = new JTextField();
+
     JButton readAllButton = new JButton("Read ALL");
     JButton writeAllButton = new JButton("Write ALL");
     JButton saveButton = new JButton("Save");
@@ -203,6 +208,10 @@ public class OperationJar extends JFrame {
         /*read VersionCode, VersionName from AndroidManifest.xml with aapt*/
         versionCodeFromAndroidManifest();
         versionNameFromAndroidManifest();
+
+        /*read UMENG_CHANNEL , UMENG_APPKEY from AndroidManifest.xml with aapt*/
+        umengChannelFromAndroidManifest();
+        umengAppKeyFromAndroidManifest();
 
         readExitButtons();
         setButtonEvent();
@@ -449,7 +458,7 @@ public class OperationJar extends JFrame {
     }
 
     private void versionNameFromAndroidManifest() {
-        /*label: versionName form AndroidManifest*/
+        /*label: versionName from AndroidManifest*/
         versionNameLabel.setFont(new Font("宋体", Font.ITALIC, 22));
         versionNameLabel.setBounds(10, 760, 300, 20);
         fileOpenFieldPanel.add(versionNameLabel);
@@ -457,6 +466,28 @@ public class OperationJar extends JFrame {
         /*text: versionName from AndroidManifest*/
         versionNameText.setBounds(200, 760, 300, 20);
         fileOpenFieldPanel.add(versionNameText);
+    }
+
+    private void umengChannelFromAndroidManifest() {
+        /*label: UMENG_CHANNEL from AndroidManifest*/
+        umengChannelLabel.setFont(new Font("宋体", Font.ITALIC, 22));
+        umengChannelLabel.setBounds(10, 800, 300, 20);
+        fileOpenFieldPanel.add(umengChannelLabel);
+
+        /*text: UMENG_CHANNEL from AndroidManifest*/
+        umengChannelText.setBounds(200, 800, 300, 20);
+        fileOpenFieldPanel.add(umengChannelText);
+    }
+
+    private void umengAppKeyFromAndroidManifest() {
+        /*label: UMENG_APPKEY from AndroidManifest*/
+        umengAppKeyLabel.setFont(new Font("宋体", Font.ITALIC, 22));
+        umengAppKeyLabel.setBounds(10, 840, 300, 20);
+        fileOpenFieldPanel.add(umengAppKeyLabel);
+
+        /*text: UMENG_CHANNEL from AndroidManifest*/
+        umengAppKeyText.setBounds(200, 840, 300, 20);
+        fileOpenFieldPanel.add(umengAppKeyText);
     }
 
     private void readWriteSaveExitButtons() {

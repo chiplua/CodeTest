@@ -486,4 +486,73 @@ public class GetFileStrings {
         }
         return versionCode;
     }
+
+
+    public static String androidManifestUmengChannelGetString(String fileName) {
+        String umengChannel = "";
+        Process pr = null;
+        try {
+            Runtime rt = Runtime.getRuntime();
+            String os_name = System.getProperties().get("os.name").toString().toLowerCase();
+            if(os_name.indexOf("windows") != -1) {
+                pr = rt.exec(System.getProperty("user.dir") + "\\operation\\tools\\aapt.exe dump badging " + fileName);
+            } else if(os_name.indexOf("linux") != -1) {
+                pr = rt.exec("./tools/aapt dump badging " + fileName);
+            }
+            BufferedInputStream in = new BufferedInputStream(pr.getInputStream());
+            BufferedReader inBr = new BufferedReader(new InputStreamReader(in));
+            String lineStr;
+            while ((lineStr = inBr.readLine()) != null) {
+                //获得命令执行后在控制台的输出信息
+                System.out.println(lineStr);// 打印输出信息
+                if (lineStr.contains("versionName")) {
+                    System.out.println("indexof is: " + lineStr.indexOf("versionName"));
+                    System.out.println("versionName.lenth() is： " + "versionName".length());
+                    umengChannel = lineStr.substring(lineStr.indexOf("versionName") + "versionName".length() + 2, lineStr.indexOf("versionName") + "versionName".length() + 11);
+                    System.out.println("versionName is: " + umengChannel);
+                    break;
+                }
+            }
+
+            inBr.close();
+            in.close();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return umengChannel;
+    }
+
+    public static String androidManifestUmengAppKeyGetString(String fileName) {
+        String umengAppKey = "";
+        Process pr = null;
+        try {
+            Runtime rt = Runtime.getRuntime();
+            String os_name = System.getProperties().get("os.name").toString().toLowerCase();
+            if(os_name.indexOf("windows") != -1) {
+                pr = rt.exec(System.getProperty("user.dir") + "\\operation\\tools\\aapt.exe dump badging " + fileName);
+            } else if(os_name.indexOf("linux") != -1) {
+                pr = rt.exec("./tools/aapt dump badging " + fileName);
+            }
+            BufferedInputStream in = new BufferedInputStream(pr.getInputStream());
+            BufferedReader inBr = new BufferedReader(new InputStreamReader(in));
+            String lineStr;
+            while ((lineStr = inBr.readLine()) != null) {
+                //获得命令执行后在控制台的输出信息
+                System.out.println(lineStr);// 打印输出信息
+                if (lineStr.contains("versionName")) {
+                    System.out.println("indexof is: " + lineStr.indexOf("versionName"));
+                    System.out.println("versionName.lenth() is： " + "versionName".length());
+                    umengAppKey = lineStr.substring(lineStr.indexOf("versionName") + "versionName".length() + 2, lineStr.indexOf("versionName") + "versionName".length() + 11);
+                    System.out.println("versionName is: " + umengAppKey);
+                    break;
+                }
+            }
+
+            inBr.close();
+            in.close();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return umengAppKey;
+    }
 }
