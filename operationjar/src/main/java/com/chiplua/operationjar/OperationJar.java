@@ -143,7 +143,7 @@ public class OperationJar extends JFrame {
         String os_name = System.getProperties().get("os.name").toString().toLowerCase();
         if(os_name.indexOf("windows") != -1) {
             imageIcon = new ImageIcon(currentUnDir + "\\background.jpg");
-        } else if(os_name.indexOf("linux") != -1) {
+        } else if(os_name.indexOf("linux") != -1 || (os_name.indexOf("mac") != -1)) {
             imageIcon = new ImageIcon(currentUnDir + "/tools/background.jpg");
         }
 
@@ -722,7 +722,7 @@ public class OperationJar extends JFrame {
         if (os_name.indexOf("windows") != -1) {
             currentUnDir = currentPath + "\\operation";
             currentFile = currentPath + "\\operation.jar";
-        } else if (os_name.indexOf("linux") != -1) {
+        } else if (os_name.indexOf("linux") != -1 || (os_name.indexOf("mac") != -1)) {
             currentUnDir = currentPath + "/operation";
             currentFile = currentPath + "/operation.jar";
         }

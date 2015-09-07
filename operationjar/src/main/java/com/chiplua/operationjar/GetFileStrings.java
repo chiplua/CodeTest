@@ -295,7 +295,9 @@ public class GetFileStrings {
             } catch (IOException ex) {
                 ex.printStackTrace();
             } finally {
-                return str.substring(19, (str.length())).trim();
+                System.out.println("str is : " + str);
+                str = str.replace(" ", "");
+                return str.substring(str.indexOf(":"), (str.length()));
             }
         }
         return "";
@@ -320,7 +322,8 @@ public class GetFileStrings {
             } catch (IOException ex) {
                 ex.printStackTrace();
             } finally {
-                return str.substring(19, (str.length()));
+                str = str.replace(" ", "");
+                return str.substring(str.indexOf(":"), (str.length()));
             }
         }
         return "";
@@ -412,6 +415,8 @@ public class GetFileStrings {
                 System.out.println("tools/aapt.exe");
             } else if(os_name.indexOf("linux") != -1) {
                 pr = rt.exec("./tools/aapt dump badging " + fileName);
+            } else if(os_name.indexOf("mac") != -1) {
+                pr = rt.exec("./tools/aapt_mac dump badging " + fileName);
             }
 
             BufferedInputStream in = new BufferedInputStream(pr.getInputStream());
@@ -454,8 +459,10 @@ public class GetFileStrings {
             if(os_name.indexOf("windows") != -1) {
                 pr = rt.exec(System.getProperty("user.dir") + "\\operation\\tools\\aapt.exe dump badging " + fileName);
             } else if(os_name.indexOf("linux") != -1) {
-                pr = rt.exec("./tools/aapt dump badging " + fileName);
-            }
+                pr = rt.exec("./tools/aapt_linux dump badging " + fileName);
+            } else if(os_name.indexOf("mac") != -1) {
+            pr = rt.exec("./tools/aapt_mac dump badging " + fileName);
+        }
             BufferedInputStream in = new BufferedInputStream(pr.getInputStream());
             BufferedReader inBr = new BufferedReader(new InputStreamReader(in));
             String lineStr;
@@ -501,7 +508,10 @@ public class GetFileStrings {
                 System.out.println("currentUnFile is " + currentUnFile);
                 System.out.println("fileName is " + fileName);
                 pr = rt.exec(currentUnFile + "/tools/aapt dump xmlstrings " + fileName + " AndroidManifest.xml");
+            } else if(os_name.indexOf("mac") != -1) {
+                pr = rt.exec(currentUnFile + "/tools/aapt_mac dump xmlstrings " + fileName + " AndroidManifest.xml");
             }
+
             BufferedInputStream in = new BufferedInputStream(pr.getInputStream());
             BufferedReader inBr = new BufferedReader(new InputStreamReader(in));
             String lineStr;
@@ -541,8 +551,11 @@ public class GetFileStrings {
             } else if(os_name.indexOf("linux") != -1) {
                 System.out.println("currentUnFile is " + currentUnFile);
                 System.out.println("fileName is " + fileName);
-                pr = rt.exec(currentUnFile + "/tools/aapt dump xmlstrings " + fileName + " AndroidManifest.xml");
+                pr = rt.exec(currentUnFile + "/tools/aapt_linux dump xmlstrings " + fileName + " AndroidManifest.xml");
+            } else if(os_name.indexOf("mac") != -1) {
+                pr = rt.exec(currentUnFile + "/tools/aapt_mac dump xmlstrings " + fileName + " AndroidManifest.xml");
             }
+
             BufferedInputStream in = new BufferedInputStream(pr.getInputStream());
             BufferedReader inBr = new BufferedReader(new InputStreamReader(in));
             String lineStr;
