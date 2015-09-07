@@ -38,6 +38,7 @@ Main-Class: com.chiplua.operationjar.OperationJar
 2.javac -d test src/main/java/com/chiplua/operationjar/*.java
 3.jar cvfm  operation.jar  META-INF/MANIFEST.MF   -C test/  .
 (把tools这个文件夹打包进jar包 jar cvfm  operation.jar  META-INF/MANIFEST.MF ./tools/aapt  -C test/  .)
+(把aapt和background.jpg都打包进jar包 jar cvfm  operation.jar  META-INF/MANIFEST.MF ./tools/aapt ./tools/background.jpg  -C test/  .)
 4.java -jar operation.jar
 
 

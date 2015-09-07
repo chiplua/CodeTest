@@ -31,6 +31,10 @@ public class OperationJar extends JFrame {
     private String selectFileDir = null;
     private String selectFileUnjarDir = null;
     private String currentBinDir = null;
+    String currentPath = System.getProperty("user.dir");
+    String currentUnDir = "";
+    String currentFile = "";
+    String os_name = System.getProperties().get("os.name").toString().toLowerCase();
     JButton open = new JButton("Open");
     JPanel fileOpenFieldPanel  = new JPanel();
     JLabel selectFile = new JLabel("Please select a Jar file:");
@@ -106,6 +110,11 @@ public class OperationJar extends JFrame {
 
     public void initMenu() {
         deCompressOperationJar();
+        try {
+            Thread.sleep(1000);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
         //System.exit(1);
         System.out.println("initMenu");
         setLayout(new FlowLayout());
@@ -133,9 +142,9 @@ public class OperationJar extends JFrame {
 
         String os_name = System.getProperties().get("os.name").toString().toLowerCase();
         if(os_name.indexOf("windows") != -1) {
-            imageIcon = new ImageIcon(System.getProperty("user.dir") + "\\operation\\background.jpg");
+            imageIcon = new ImageIcon(currentUnDir + "\\background.jpg");
         } else if(os_name.indexOf("linux") != -1) {
-            imageIcon = new ImageIcon("./background.jpg");
+            imageIcon = new ImageIcon(currentUnDir + "/tools/background.jpg");
         }
 
         JLabel background = new JLabel(imageIcon);
@@ -175,7 +184,7 @@ public class OperationJar extends JFrame {
     }
 
     private void initApkFrame() {
-        frame.setSize(730, 850);
+        frame.setSize(730, 950);
         container.setLayout(new BorderLayout());
         frame.setVisible(true);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -510,11 +519,11 @@ public class OperationJar extends JFrame {
 
     private void readExitButtons() {
         /*button: Button for read all*/
-        readAllButton.setBounds(570, 720, 150, 20);
+        readAllButton.setBounds(570, 800, 150, 20);
         fileOpenFieldPanel.add(readAllButton);
 
         /*button: Button for exit*/
-        exitButton.setBounds(570, 760, 150, 20);
+        exitButton.setBounds(570, 840, 150, 20);
         fileOpenFieldPanel.add(exitButton);
     }
 
@@ -590,6 +599,8 @@ public class OperationJar extends JFrame {
                 slotIdYeamobText.setText(GetFileStrings.yeamobSlotIdTextGetString(selectFileUnjarDir));
                 versionCodeText.setText(GetFileStrings.androidManifestVersionCodeGetString(selectFileName));
                 versionNameText.setText(GetFileStrings.androidManifestVersionNameGetString(selectFileName));
+                umengChannelText.setText(GetFileStrings.androidManifestUmengChannelGetString(selectFileName, currentUnDir));
+                umengAppKeyText.setText(GetFileStrings.androidManifestUmengAppKeyGetString(selectFileName, currentUnDir));
             }
         });
 
@@ -707,21 +718,25 @@ public class OperationJar extends JFrame {
     }
 
     private void deCompressOperationJar() {
-        String currentPath = System.getProperty("user.dir");
-        String currentUnDir = currentPath + "\\operation";
-        String currentFile = currentPath + "\\operation.jar";
-
-        String os_name = System.getProperties().get("os.name").toString().toLowerCase();
         System.out.println("os_name is: " + os_name);
+        if (os_name.indexOf("windows") != -1) {
+            currentUnDir = currentPath + "\\operation";
+            currentFile = currentPath + "\\operation.jar";
+        } else if (os_name.indexOf("linux") != -1) {
+            currentUnDir = currentPath + "/operation";
+            currentFile = currentPath + "/operation.jar";
+        }
+
         currentBinDir = currentUnDir;
-        if(os_name.indexOf("windows") != -1) {
-            try {
-                DecompressJar.doIt(currentFile, currentUnDir);
-                GetFileStrings.deleteFile(currentUnDir + "\\com");
-                GetFileStrings.deleteFile(currentUnDir + "\\META-INF");
-            } catch (Exception xe) {
-                xe.printStackTrace();
-            }
+        try {
+            DecompressJar.doIt(currentFile, currentUnDir);
+            Runtime runtime = Runtime.getRuntime();
+            Process proc = runtime.exec("chmod 777 " + currentUnDir + "/tools/aapt");
+
+          /*  GetFileStrings.deleteFile(currentUnDir + "\\com");
+            GetFileStrings.deleteFile(currentUnDir + "\\META-INF");*/
+        } catch (Exception xe) {
+            xe.printStackTrace();
         }
     }
 }

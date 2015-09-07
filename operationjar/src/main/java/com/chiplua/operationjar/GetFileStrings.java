@@ -345,7 +345,7 @@ public class GetFileStrings {
             } catch (IOException ex) {
                 ex.printStackTrace();
             } finally {
-                return str.substring(12, (str.length()) -2);
+                return str.substring(12, (str.length()) - 2);
             }
         }
         return "";
@@ -488,16 +488,19 @@ public class GetFileStrings {
     }
 
 
-    public static String androidManifestUmengChannelGetString(String fileName) {
+    public static String androidManifestUmengChannelGetString(String fileName, String currentUnFile) {
         String umengChannel = "";
         Process pr = null;
+        boolean untilUmeng = false;
         try {
             Runtime rt = Runtime.getRuntime();
             String os_name = System.getProperties().get("os.name").toString().toLowerCase();
             if(os_name.indexOf("windows") != -1) {
-                pr = rt.exec(System.getProperty("user.dir") + "\\operation\\tools\\aapt.exe dump badging " + fileName);
+                pr = rt.exec(currentUnFile + "\\tools\\aapt.exe dump badging " + fileName);
             } else if(os_name.indexOf("linux") != -1) {
-                pr = rt.exec("./tools/aapt dump badging " + fileName);
+                System.out.println("currentUnFile is " + currentUnFile);
+                System.out.println("fileName is " + fileName);
+                pr = rt.exec(currentUnFile + "/tools/aapt dump xmlstrings " + fileName + " AndroidManifest.xml");
             }
             BufferedInputStream in = new BufferedInputStream(pr.getInputStream());
             BufferedReader inBr = new BufferedReader(new InputStreamReader(in));
@@ -505,11 +508,14 @@ public class GetFileStrings {
             while ((lineStr = inBr.readLine()) != null) {
                 //获得命令执行后在控制台的输出信息
                 System.out.println(lineStr);// 打印输出信息
-                if (lineStr.contains("versionName")) {
-                    System.out.println("indexof is: " + lineStr.indexOf("versionName"));
-                    System.out.println("versionName.lenth() is： " + "versionName".length());
-                    umengChannel = lineStr.substring(lineStr.indexOf("versionName") + "versionName".length() + 2, lineStr.indexOf("versionName") + "versionName".length() + 11);
-                    System.out.println("versionName is: " + umengChannel);
+                if (lineStr.contains("UMENG_CHANNEL")) {
+                    untilUmeng = true;
+                    continue;
+                }
+
+                if (untilUmeng) {
+                    umengChannel = lineStr.substring(lineStr.indexOf(":") + 2, lineStr.length());
+                    System.out.println("UMENG_CHANNEL is: " + umengChannel);
                     break;
                 }
             }
@@ -522,16 +528,20 @@ public class GetFileStrings {
         return umengChannel;
     }
 
-    public static String androidManifestUmengAppKeyGetString(String fileName) {
+
+    public static String androidManifestUmengAppKeyGetString(String fileName, String currentUnFile) {
         String umengAppKey = "";
         Process pr = null;
+        boolean untilUmeng = false;
         try {
             Runtime rt = Runtime.getRuntime();
             String os_name = System.getProperties().get("os.name").toString().toLowerCase();
             if(os_name.indexOf("windows") != -1) {
-                pr = rt.exec(System.getProperty("user.dir") + "\\operation\\tools\\aapt.exe dump badging " + fileName);
+                pr = rt.exec(currentUnFile + "\\tools\\aapt.exe dump badging " + fileName);
             } else if(os_name.indexOf("linux") != -1) {
-                pr = rt.exec("./tools/aapt dump badging " + fileName);
+                System.out.println("currentUnFile is " + currentUnFile);
+                System.out.println("fileName is " + fileName);
+                pr = rt.exec(currentUnFile + "/tools/aapt dump xmlstrings " + fileName + " AndroidManifest.xml");
             }
             BufferedInputStream in = new BufferedInputStream(pr.getInputStream());
             BufferedReader inBr = new BufferedReader(new InputStreamReader(in));
@@ -539,11 +549,14 @@ public class GetFileStrings {
             while ((lineStr = inBr.readLine()) != null) {
                 //获得命令执行后在控制台的输出信息
                 System.out.println(lineStr);// 打印输出信息
-                if (lineStr.contains("versionName")) {
-                    System.out.println("indexof is: " + lineStr.indexOf("versionName"));
-                    System.out.println("versionName.lenth() is： " + "versionName".length());
-                    umengAppKey = lineStr.substring(lineStr.indexOf("versionName") + "versionName".length() + 2, lineStr.indexOf("versionName") + "versionName".length() + 11);
-                    System.out.println("versionName is: " + umengAppKey);
+                if (lineStr.contains("UMENG_APPKEY")) {
+                    untilUmeng = true;
+                    continue;
+                }
+
+                if (untilUmeng) {
+                    umengAppKey = lineStr.substring(lineStr.indexOf(":") + 2, lineStr.length());
+                    System.out.println("UMENG_CHANNEL is: " + umengAppKey);
                     break;
                 }
             }
