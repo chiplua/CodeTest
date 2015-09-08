@@ -142,7 +142,7 @@ public class OperationJar extends JFrame {
 
         String os_name = System.getProperties().get("os.name").toString().toLowerCase();
         if(os_name.indexOf("windows") != -1) {
-            imageIcon = new ImageIcon(currentUnDir + "\\background.jpg");
+            imageIcon = new ImageIcon(currentUnDir + "\\tools\\background.jpg");
         } else if(os_name.indexOf("linux") != -1 || (os_name.indexOf("mac") != -1)) {
             imageIcon = new ImageIcon(currentUnDir + "/tools/background.jpg");
         }
@@ -553,6 +553,7 @@ public class OperationJar extends JFrame {
                 selectJarPath.setText(selectFileName);
                 System.out.println("The directory is " + selectFileDir);
                 System.out.println("The unRar directory is " + selectFileUnjarDir);
+                setAllTextNull();
             }
         });
 
@@ -597,8 +598,8 @@ public class OperationJar extends JFrame {
                 switchIdYeamobText.setText(GetFileStrings.yeamobSwitchIdTextGetString(selectFileUnjarDir));
                 appIdYeamobText.setText(GetFileStrings.yeamobAppIdTextGetString(selectFileUnjarDir));
                 slotIdYeamobText.setText(GetFileStrings.yeamobSlotIdTextGetString(selectFileUnjarDir));
-                versionCodeText.setText(GetFileStrings.androidManifestVersionCodeGetString(selectFileName));
-                versionNameText.setText(GetFileStrings.androidManifestVersionNameGetString(selectFileName));
+                versionCodeText.setText(GetFileStrings.androidManifestVersionCodeGetString(selectFileName, currentUnDir));
+                versionNameText.setText(GetFileStrings.androidManifestVersionNameGetString(selectFileName, currentUnDir));
                 umengChannelText.setText(GetFileStrings.androidManifestUmengChannelGetString(selectFileName, currentUnDir));
                 umengAppKeyText.setText(GetFileStrings.androidManifestUmengAppKeyGetString(selectFileName, currentUnDir));
             }
@@ -731,12 +732,36 @@ public class OperationJar extends JFrame {
         try {
             DecompressJar.doIt(currentFile, currentUnDir);
             Runtime runtime = Runtime.getRuntime();
-            Process proc = runtime.exec("chmod 777 " + currentUnDir + "/tools/aapt");
+            runtime.exec("chmod 777 " + currentUnDir + "/tools/aapt_linux");
+            runtime.exec("chmod 777 " + currentUnDir + "/tools/aapt_mac");
+            runtime.exec("chmod 777 " + currentUnDir + "/tools/aapt.exe");
 
           /*  GetFileStrings.deleteFile(currentUnDir + "\\com");
             GetFileStrings.deleteFile(currentUnDir + "\\META-INF");*/
         } catch (Exception xe) {
             xe.printStackTrace();
         }
+    }
+
+    private void setAllTextNull() {
+        lcStringText1.setText("");
+        lcStringText2.setText("");
+        appNameText.setText("");;
+        packageNameText.setText("");
+        serverUrlText.setText("");
+        needsimText.setText("");
+        switchIdAvazuText.setText("");
+        trafficSourceIdAvazuText.setText("");
+        switchIdGmobiText.setText("");
+        channelGmobiText.setText("");
+        hllserviceVerText.setText("");
+        hllStatVerText.setText("");
+        switchIdYeamobText.setText("");
+        appIdYeamobText.setText("");
+        slotIdYeamobText.setText("");
+        versionCodeText.setText("");
+        versionNameText.setText("");
+        umengChannelText.setText("");
+        umengAppKeyText.setText("");
     }
 }

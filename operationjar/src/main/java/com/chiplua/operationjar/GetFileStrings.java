@@ -297,7 +297,7 @@ public class GetFileStrings {
             } finally {
                 System.out.println("str is : " + str);
                 str = str.replace(" ", "");
-                return str.substring(str.indexOf(":"), (str.length()));
+                return str.substring(str.indexOf(":") + 1, (str.length()));
             }
         }
         return "";
@@ -323,7 +323,7 @@ public class GetFileStrings {
                 ex.printStackTrace();
             } finally {
                 str = str.replace(" ", "");
-                return str.substring(str.indexOf(":"), (str.length()));
+                return str.substring(str.indexOf(":") + 1, (str.length()));
             }
         }
         return "";
@@ -404,19 +404,20 @@ public class GetFileStrings {
         return "";
     }
 
-    public static String androidManifestVersionCodeGetString(String fileName) {
+    public static String androidManifestVersionCodeGetString(String fileName, String currentUnFile) {
         String versionCode = "";
         Process pr = null;
         try {
             Runtime rt = Runtime.getRuntime();
             String os_name = System.getProperties().get("os.name").toString().toLowerCase();
             if(os_name.indexOf("windows") != -1) {
-                pr = rt.exec(System.getProperty("user.dir") + "\\operation\\tools\\aapt.exe dump badging " + fileName);
-                System.out.println("tools/aapt.exe");
+                String command = "\"" + (System.getProperty("user.dir")) + "\\operation\\tools\\aapt.exe" + "\"" + " dump badging " + "\"" + fileName + "\"";
+                pr = rt.exec(command);
+                System.out.println("command is : " + command);
             } else if(os_name.indexOf("linux") != -1) {
-                pr = rt.exec("./tools/aapt dump badging " + fileName);
+                pr = rt.exec(currentUnFile + "/tools/aapt_linux dump badging " + fileName);
             } else if(os_name.indexOf("mac") != -1) {
-                pr = rt.exec("./tools/aapt_mac dump badging " + fileName);
+                pr = rt.exec(currentUnFile + "/tools/aapt_mac dump badging " + fileName);
             }
 
             BufferedInputStream in = new BufferedInputStream(pr.getInputStream());
@@ -428,7 +429,13 @@ public class GetFileStrings {
                 if (lineStr.contains("versionCode")) {
                     System.out.println("indexof is: " + lineStr.indexOf("versionCode"));
                     System.out.println("versionCode.lenth() is： " + "versionCode".length());
-                    versionCode = lineStr.substring(lineStr.indexOf("versionCode") + "versionCode".length() + 2, lineStr.indexOf("versionCode") + "versionCode".length() + 4);
+                    String[] lineStrArray = lineStr.split(" ");
+                    for (int i = 0; i < lineStrArray.length; i++) {
+                        if (lineStrArray[i].indexOf("versionCode") != -1) {
+                            versionCode = lineStrArray[i].trim().substring(lineStrArray[i].indexOf("versionCode") + "versionCode".length() + 2, lineStrArray[i].length() -1 );
+                        }
+                    }
+
                     System.out.println("versionCode is: " + versionCode);
                     break;
                 }
@@ -450,18 +457,20 @@ public class GetFileStrings {
         return versionCode;
     }
 
-    public static String androidManifestVersionNameGetString(String fileName) {
-        String versionCode = "";
+    public static String androidManifestVersionNameGetString(String fileName, String currentUnFile) {
+        String versionName = "";
         Process pr = null;
         try {
             Runtime rt = Runtime.getRuntime();
             String os_name = System.getProperties().get("os.name").toString().toLowerCase();
             if(os_name.indexOf("windows") != -1) {
-                pr = rt.exec(System.getProperty("user.dir") + "\\operation\\tools\\aapt.exe dump badging " + fileName);
+                String command = "\"" + (System.getProperty("user.dir")) + "\\operation\\tools\\aapt.exe" + "\"" + " dump badging " + "\"" + fileName + "\"";
+                pr = rt.exec(command);
+                System.out.println("command is : " + command);
             } else if(os_name.indexOf("linux") != -1) {
-                pr = rt.exec("./tools/aapt_linux dump badging " + fileName);
+                pr = rt.exec(currentUnFile + "/tools/aapt_linux dump badging " + fileName);
             } else if(os_name.indexOf("mac") != -1) {
-            pr = rt.exec("./tools/aapt_mac dump badging " + fileName);
+            pr = rt.exec(currentUnFile + "/tools/aapt_mac dump badging " + fileName);
         }
             BufferedInputStream in = new BufferedInputStream(pr.getInputStream());
             BufferedReader inBr = new BufferedReader(new InputStreamReader(in));
@@ -472,26 +481,26 @@ public class GetFileStrings {
                 if (lineStr.contains("versionName")) {
                     System.out.println("indexof is: " + lineStr.indexOf("versionName"));
                     System.out.println("versionName.lenth() is： " + "versionName".length());
-                    versionCode = lineStr.substring(lineStr.indexOf("versionName") + "versionName".length() + 2, lineStr.indexOf("versionName") + "versionName".length() + 11);
-                    System.out.println("versionName is: " + versionCode);
+                    String[] lineStrArray = lineStr.split(" ");
+                    for (int i = 0; i < lineStrArray.length; i++) {
+                        System.out.println("lineStrArray is : " + lineStrArray[i]);
+                        if (lineStrArray[i].indexOf("versionName") != -1) {
+                            System.out.println("lineStrArray" + i + "is: " + lineStrArray[i]);
+                           versionName = lineStrArray[i].trim().substring(lineStrArray[i].indexOf("versionName") + "versionName".length() + 2, lineStrArray[i].length() -1 );
+                        }
+                    }
+                    //versionName = lineStr.substring(lineStr.indexOf("versionName") + "versionName".length() + 2, lineStr.indexOf("platformBuildVersionName") - 2);
+                    System.out.println("versionName is: " + versionName);
                     break;
                 }
             }
-
-/*
-            //检查命令是否执行失败。
-            if (pr.waitFor() != 0) {
-                if (pr.exitValue() == 1)//p.exitValue()==0表示正常结束，1：非正常结束
-                    System.err.println("命令执行失败!");
-            }
-*/
 
             inBr.close();
             in.close();
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-        return versionCode;
+        return versionName;
     }
 
 
@@ -503,11 +512,13 @@ public class GetFileStrings {
             Runtime rt = Runtime.getRuntime();
             String os_name = System.getProperties().get("os.name").toString().toLowerCase();
             if(os_name.indexOf("windows") != -1) {
-                pr = rt.exec(currentUnFile + "\\tools\\aapt.exe dump badging " + fileName);
+                String command = "\"" + (System.getProperty("user.dir")) + "\\operation\\tools\\aapt.exe" + "\"" + " dump xmlstrings " + "\"" + fileName + "\"" + " AndroidManifest.xml";
+                pr = rt.exec(command);
+                System.out.println("command is : " + command);
             } else if(os_name.indexOf("linux") != -1) {
                 System.out.println("currentUnFile is " + currentUnFile);
                 System.out.println("fileName is " + fileName);
-                pr = rt.exec(currentUnFile + "/tools/aapt dump xmlstrings " + fileName + " AndroidManifest.xml");
+                pr = rt.exec(currentUnFile + "/tools/aapt_linux dump xmlstrings " + fileName + " AndroidManifest.xml");
             } else if(os_name.indexOf("mac") != -1) {
                 pr = rt.exec(currentUnFile + "/tools/aapt_mac dump xmlstrings " + fileName + " AndroidManifest.xml");
             }
@@ -547,7 +558,9 @@ public class GetFileStrings {
             Runtime rt = Runtime.getRuntime();
             String os_name = System.getProperties().get("os.name").toString().toLowerCase();
             if(os_name.indexOf("windows") != -1) {
-                pr = rt.exec(currentUnFile + "\\tools\\aapt.exe dump badging " + fileName);
+                String command = "\"" + (System.getProperty("user.dir")) + "\\operation\\tools\\aapt.exe" + "\"" + " dump xmlstrings " + "\"" + fileName + "\"" + " AndroidManifest.xml";
+                pr = rt.exec(command);
+                System.out.println("command is : " + command);
             } else if(os_name.indexOf("linux") != -1) {
                 System.out.println("currentUnFile is " + currentUnFile);
                 System.out.println("fileName is " + fileName);
